@@ -11,9 +11,25 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.0.5.RELEASE</version>
+        <version>2.1.6.RELEASE</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
+
+    <properties>
+        <mp.version>3.2.0</mp.version>
+        <mybatis-typehandlers.version>1.0.2</mybatis-typehandlers.version>
+<!--        <mybatis.version>1.3.2</mybatis.version>-->
+        <springfox-swagger-ui.version>2.9.2</springfox-swagger-ui.version>
+        <swagger2.version>2.9.2</swagger2.version>
+        <lombok.version>1.16.10</lombok.version>
+        <google-guava.version>24.1.1-jre</google-guava.version>
+        <swagger-ui.version>1.9.0</swagger-ui.version>
+        <jasypt-spring.version>2.1.0</jasypt-spring.version>
+        <jackson.version>2.11.0</jackson.version>
+        <shedlock.version>4.15.1</shedlock.version>
+        <commons-fileupload.version>1.4</commons-fileupload.version>
+        <commons-lang3.version>3.8.1</commons-lang3.version>
+    </properties>
 
     <dependencies>
         <dependency>
@@ -46,11 +62,11 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        <dependency>
+<!--        <dependency>
             <groupId>org.mybatis.spring.boot</groupId>
             <artifactId>mybatis-spring-boot-starter</artifactId>
-            <version>1.3.2</version>
-        </dependency>
+            <version>${mybatis.version}</version>
+        </dependency>-->
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -74,9 +90,7 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-devtools</artifactId>
-<!--            <scope>runtime</scope>-->
-            <optional>true</optional>
-            <scope>true</scope>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -88,11 +102,21 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
-<!--        swagger -->
+        <dependency>
+            <groupId>com.baomidou</groupId>
+            <artifactId>mybatis-plus-boot-starter</artifactId>
+            <version>${mp.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.mybatis</groupId>
+            <artifactId>mybatis-typehandlers-jsr310</artifactId>
+            <version>${mybatis-typehandlers.version}</version>
+        </dependency>
+        <!--        swagger -->
         <dependency>
             <groupId>io.springfox</groupId>
             <artifactId>springfox-swagger-ui</artifactId>
-            <version>2.9.2</version>
+            <version>${springfox-swagger-ui.version}</version>
             <exclusions>
                 <exclusion>
                     <artifactId>guava</artifactId>
@@ -103,7 +127,7 @@
         <dependency>
             <groupId>io.springfox</groupId>
             <artifactId>springfox-swagger2</artifactId>
-            <version>2.9.2</version>
+            <version>${swagger2.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>com.google.guava</groupId>
@@ -122,28 +146,28 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>24.1.1-jre</version>
+            <version>${google-guava.version}</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.16.10</version>
+            <version>${lombok.version}</version>
         </dependency>
         <dependency>
             <groupId>com.github.ulisesbocchio</groupId>
             <artifactId>jasypt-spring-boot-starter</artifactId>
-            <version>2.1.0</version>
+            <version>${jasypt-spring.version}</version>
         </dependency>
         <dependency>
             <groupId>com.github.xiaoymin</groupId>
             <artifactId>swagger-bootstrap-ui</artifactId>
-            <version>1.9.0</version>
+            <version>${swagger-ui.version}</version>
         </dependency>
 
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>2.11.0</version>
+            <version>${jackson.version}</version>
             <exclusions>
                 <exclusion>
                     <artifactId>jackson-core</artifactId>
@@ -158,17 +182,17 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-core</artifactId>
-            <version>2.11.0</version>
+            <version>${jackson.version}</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-annotations</artifactId>
-            <version>2.11.0</version>
+            <version>${jackson.version}</version>
         </dependency>
         <dependency>
             <groupId>commons-fileupload</groupId>
             <artifactId>commons-fileupload</artifactId>
-            <version>1.4</version>
+            <version>${commons-fileupload.version}</version>
             <exclusions>
                 <exclusion>
                     <artifactId>commons-io</artifactId>
@@ -179,45 +203,59 @@
         <dependency>
             <groupId>net.javacrumbs.shedlock</groupId>
             <artifactId>shedlock-spring</artifactId>
-            <version>4.15.1</version>
+            <version>${shedlock.version}</version>
         </dependency>
         <dependency>
             <groupId>net.javacrumbs.shedlock</groupId>
             <artifactId>shedlock-provider-jdbc-template</artifactId>
-            <version>4.15.1</version>
+            <version>${shedlock.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>${commons-lang3.version}</version>
         </dependency>
 
+
+<!--        ojdbc-->
+        <dependency>
+            <groupId>vz.service.shenzhen</groupId>
+            <artifactId>ojdbc8</artifactId>
+            <version>1</version>
+            <scope>system</scope>
+            <systemPath>${basedir}/src/main/webapp/WEB-INF/lib/ojdbc-8.jar</systemPath>
+        </dependency>
 
     </dependencies>
 
 
-<!--        <dependency>
-        <groupId>org.apache.commons</groupId>
-        <artifactId>commons-lang3</artifactId>
-        <version>3.8.1</version>
-    </dependency>
-    <dependency>
-        <groupId>org.dom4j</groupId>
-        <artifactId>dom4j</artifactId>
-        <version>2.1.3</version>
-    </dependency>
+    <!--        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.8.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.dom4j</groupId>
+            <artifactId>dom4j</artifactId>
+            <version>2.1.3</version>
+        </dependency>
 
-    <dependency>
-        <groupId>com.jcraft</groupId>
-        <artifactId>jsch</artifactId>
-        <version>0.1.54</version>
-    </dependency>
-    <dependency>
-        <groupId>org.apache.httpcomponents</groupId>
-        <artifactId>httpclient</artifactId>
-        <version>4.5.9</version>
-    </dependency>
-    <dependency>
-        <groupId>org.apache.logging.log4j</groupId>
-        <artifactId>log4j-api</artifactId>
-        <version>2.13.3</version>
-    </dependency>
--->
+        <dependency>
+            <groupId>com.jcraft</groupId>
+            <artifactId>jsch</artifactId>
+            <version>0.1.54</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>4.5.9</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+            <version>2.13.3</version>
+        </dependency>
+    -->
 
     <build>
         <plugins>
@@ -257,7 +295,7 @@
                     </webResources>
                 </configuration>
             </plugin>
-    </plugins>
+        </plugins>
     </build>
 
 </project>

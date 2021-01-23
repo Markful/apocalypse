@@ -11,10 +11,10 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableAsync
 @EnableScheduling
 @EnableSwagger2
-public class Application {
+public class ApocalypseApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(Application.class, args);
+        SpringApplication.run(ApocalypseApplication.class, args);
     }
 
 }

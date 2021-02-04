@@ -1,12 +1,18 @@
 package com.vzoom.apocalypse.api.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.vzoom.apocalypse.api.config.CacheConfig;
+import com.vzoom.apocalypse.api.config.FeedbackProperties;
 import com.vzoom.apocalypse.api.entity.ApocalypseAreaRules;
+import com.vzoom.apocalypse.api.entity.ApocalypseProperty;
 import com.vzoom.apocalypse.api.repository.AreaRulesMapper;
+import com.vzoom.apocalypse.api.repository.PropertyMapper;
 import com.vzoom.apocalypse.api.service.CheckDataService;
+import com.vzoom.apocalypse.common.cache.CommonCache;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -16,6 +22,7 @@ import java.util.List;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
+import static com.vzoom.apocalypse.api.config.CacheConfig.RULES_MAP;
 import static com.vzoom.apocalypse.common.cache.CommonCache.areafieldPropertiesCache;
 
 /**
@@ -30,6 +37,11 @@ public class CheckDataServiceImpl implements CheckDataService {
     @Autowired
     private AreaRulesMapper areaRulesMapper;
 
+    @Autowired
+    private PropertyMapper propertyMapper;
+
+    @Autowired
+    private Environment environment;
 
     /**
      * 检查配置的数据完整性
@@ -52,7 +64,8 @@ public class CheckDataServiceImpl implements CheckDataService {
                 log.error("当前配置地区 {} 规则未配置，请到数据库中进行规则配置",area);
                 return false;
             }
-
+            RULES_MAP.put(area,areaRulesList);
+            /* 数据库中 只需要配置 需要进行EL表达式替换的参数
             //获取地区配置的分隔符
             String areaPropreties = areafieldPropertiesCache.get(area);
             String separator = areaPropreties.split("[A-Za-z0-9]+")[0];
@@ -66,15 +79,48 @@ public class CheckDataServiceImpl implements CheckDataService {
                         return false;
                     }
                 }
-            }
+            }*/
         }
-
-        //地区检查
-
-
 
         return true;
     }
 
+    /**
+     * 获取相关配置参数
+     */
+    @Override
+    public void loadAreaFieldProperties(){
+        QueryWrapper<ApocalypseProperty> wrapper = new QueryWrapper<>();
+        CacheConfig.PROPERTY_CACHE_LIST = propertyMapper.selectList(wrapper);
+    }
+
+    /**
+     * 获取配置文件中所有地区的 字段的顺序的配置，存入缓存
+     * key:area
+     * value:nsrsbh|nsrmc|xxx|....
+     */
+    @Override
+    public void loadAreaField(){
+
+        QueryWrapper<ApocalypseAreaRules> wrapper = new QueryWrapper<>();
+        List<ApocalypseAreaRules> apocalypseAreaRules = areaRulesMapper.selectList(wrapper);
+
+        //去重得到所有配置的地区,只过滤得到不重复的area字段
+        List<ApocalypseAreaRules> collect = apocalypseAreaRules.stream().filter(x -> StringUtils.isNotEmpty(x.getArea())).collect(
+                Collectors.collectingAndThen(
+                        Collectors.toCollection(() -> new TreeSet<>(Comparator.comparing(ApocalypseAreaRules::getArea))), ArrayList::new)
+        );
+
+        //读取所有配置文件的地区，存入缓存
+        for (ApocalypseAreaRules areaRules : collect) {
+            String area = areaRules.getArea();
+            String property = environment.getProperty("feedback.param." + area);
+            if(StringUtils.isNotEmpty(area) && null != property){
+                CommonCache.areaList.add(area);
+                CommonCache.areafieldPropertiesCache.put(area,property);
+            }
+        }
+
+    }
 
 }

@@ -9,6 +9,9 @@ public interface CheckDataService {
 
     public boolean checkFeedbackPropertyIntegrity();
 
+    public void loadAreaFieldProperties();
+
+    public void loadAreaField();
 
 
 }

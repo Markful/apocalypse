@@ -1,4 +1,4 @@
-package com.vzoom.apocalypse.api.entity;
+package com.vzoom.apocalypse.common.entity;
 
 public interface ResponseInfo {
     String getCode();

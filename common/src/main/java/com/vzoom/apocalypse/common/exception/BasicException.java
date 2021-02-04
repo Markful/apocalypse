@@ -1,7 +1,7 @@
-package com.vzoom.apocalypse.api.exception;
+package com.vzoom.apocalypse.common.exception;
 
 
-import com.vzoom.apocalypse.api.entity.ResponseInfo;
+import com.vzoom.apocalypse.common.entity.ResponseInfo;
 
 /**
  * 一般异常

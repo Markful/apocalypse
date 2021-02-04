@@ -2,6 +2,7 @@ package com.vzoom.apocalypse.api.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.Data;
 
 import java.util.Date;
 
@@ -10,6 +11,7 @@ import java.util.Date;
  *
  */
 @TableName("apocalypse_feedback")
+@Data
 public class ApocalypseFeedback {
 
     /**
@@ -53,8 +55,8 @@ public class ApocalypseFeedback {
      * 反馈信息的处理后的报文
      * xxxx|xxxx|xxxx|xxxx....
      */
-    @TableField("TREATED_XML")
-    private String treated_xml;
+    @TableField("TREATED_TEXT")
+    private String treated_text;
 
 
     /**
@@ -64,6 +66,11 @@ public class ApocalypseFeedback {
     @TableField("TARGET")
     private String target;
 
+    /**
+     * 反馈 datagrid 的报文
+     */
+    @TableField("REQUEST_JSON")
+    private String request_json;
 
     /**
      * 统一状态码

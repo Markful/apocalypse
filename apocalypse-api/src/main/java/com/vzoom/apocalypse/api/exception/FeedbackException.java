@@ -1,7 +1,8 @@
 package com.vzoom.apocalypse.api.exception;
 
 
-import com.vzoom.apocalypse.api.entity.ResponseInfo;
+import com.vzoom.apocalypse.common.entity.ResponseInfo;
+import com.vzoom.apocalypse.common.exception.BasicException;
 
 /**
  * @author yangzhilin

@@ -51,19 +51,6 @@ public class ApocalypseAreaRules {
     @TableField("RULE_EXPRESSION")
     private String rule_expression;
 
-    /**
-     * ORG_VALUE
-     * 原始反馈值
-     */
-    @TableField("ORG_VALUE")
-    private String org_value;
-
-    /**
-     * TAX_VALUE
-     * 处理后的反馈值
-     */
-    @TableField("TAX_VALUE")
-    private String tax_value;
 
     /**
      * LRSJ

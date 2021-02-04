@@ -14,7 +14,14 @@ public enum CommonEnum {
 
 
     FEEDBACK_FAIL("9999","反馈失败"),
-    NEVER_FEEDBACK("9999","该纳税人未做过反馈")
+    NEVER_FEEDBACK("9999","该纳税人未做过反馈"),
+
+    FEEDBACK_STRATEGY_SFTP("sftp",""),
+    FEEDBACK_STRATEGY_SFTP_ZIP("sftp_zip",""),
+    FEEDBACK_STRATEGY_FTP("ftp",""),
+    FEEDBACK_STRATEGY_FTP_ZIP("ftp_zip",""),
+    FEEDBACK_STRATEGY_TXT("txt",""),
+    FEEDBACK_STRATEGY_TXT_ZIP("txt_zip",""),
 
     ;
 
@@ -31,6 +38,15 @@ public enum CommonEnum {
         for (CommonEnum c : CommonEnum.values()) {
             if (c.getCode().equals(code)) {
                 return c.message;
+            }
+        }
+        return null;
+    }
+
+    public static String getCodeByMessage(String message) {
+        for (CommonEnum c : CommonEnum.values()) {
+            if (c.getMessage().equals(message)) {
+                return c.code;
             }
         }
         return null;

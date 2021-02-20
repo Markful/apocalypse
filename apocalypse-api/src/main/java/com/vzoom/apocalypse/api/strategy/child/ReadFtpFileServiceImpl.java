@@ -1,11 +1,14 @@
 package com.vzoom.apocalypse.api.strategy.child;
 
+import com.vzoom.apocalypse.api.service.ExceptionService;
 import com.vzoom.apocalypse.api.strategy.ReadFeedbackFileStrategy;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -13,7 +16,7 @@ import java.util.List;
 public class ReadFtpFileServiceImpl implements ReadFeedbackFileStrategy {
 
     @Autowired
-    private AnomalyService anomalyService;
+    private ExceptionService exceptionService;
 
     @Override
     public List<String> readFeedbackData(String areaFilePath) throws IOException {
@@ -36,7 +39,7 @@ public class ReadFtpFileServiceImpl implements ReadFeedbackFileStrategy {
                 // 不抛出异常，添加异常日志
                 String exceptionMsg = "读取ftp文件出现异常：" + e.getMessage() + e.toString();
                 log.info(exceptionMsg);
-                anomalyService.insertAnomalyLogByException(e, exceptionMsg);
+                exceptionService.insertAnomalyLogByException(e, exceptionMsg);
             }
         }
         log.info("读取ftp文件内容方法结束");

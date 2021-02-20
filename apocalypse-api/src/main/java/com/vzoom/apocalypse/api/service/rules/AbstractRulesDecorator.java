@@ -6,6 +6,8 @@ import com.vzoom.apocalypse.api.service.HandlerService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * 模板方法
  *
@@ -25,20 +27,18 @@ public abstract class AbstractRulesDecorator  implements AreaRules {
     @Override
     public void HandleRules(FeedbackContext feedbackContext){
 
-        //获取对应配置
-        getPropertiesFromDB(feedbackContext);
-
+        //调用反馈引擎，将原始数据转换成税局需要的数据
+        invokeApocalypseEngine(feedbackContext);
 
         //根据地区模板，组装XML报文
         packagingXmlFromFreemarker(feedbackContext);
 
-
-        //请求datagrid入口网关
+        //请求datagrid入口网关，反馈给税局
         invokeDatagrid(feedbackContext);
 
     };
 
-    public abstract void getPropertiesFromDB(FeedbackContext feedbackContext);
+    public abstract void invokeApocalypseEngine(FeedbackContext feedbackContext);
 
     public abstract String packagingXmlFromFreemarker(FeedbackContext feedbackContext);
 

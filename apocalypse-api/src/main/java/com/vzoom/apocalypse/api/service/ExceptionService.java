@@ -3,6 +3,8 @@ package com.vzoom.apocalypse.api.service;
 
 public interface ExceptionService {
 
-    public void toException(Exception e,String... args);
+    void toException(Exception e,String... args);
+
+    void insertAnomalyLogByException(Exception e, String exceptionMsg);
 
 }

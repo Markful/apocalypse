@@ -7,6 +7,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Date;
+
+
 @TableName("apocalypse_property")
 @Data
 @AllArgsConstructor
@@ -85,7 +88,7 @@ public class ApocalypseProperty {
      * 录入时间
      */
     @TableField("LRSJ")
-    private String lrsj;
+    private Date lrsj;
 
 
 

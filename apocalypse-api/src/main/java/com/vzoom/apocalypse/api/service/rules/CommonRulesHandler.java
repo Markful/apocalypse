@@ -6,6 +6,7 @@ import com.vzoom.apocalypse.api.entity.ApocalypseFeedback;
 import com.vzoom.apocalypse.api.entity.ApocalypseProperty;
 import com.vzoom.apocalypse.api.repository.PropertyMapper;
 import com.vzoom.apocalypse.api.service.AreaRules;
+import com.vzoom.apocalypse.api.service.FeedbackEngine;
 import com.vzoom.apocalypse.api.service.HandlerService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,9 @@ public class CommonRulesHandler extends AbstractRulesDecorator {
     @Autowired
     private PropertyMapper propertyMapper;
 
+    @Autowired
+    private FeedbackEngine feedbackEngine;
+
     /**
      * 通用处理逻辑
      * 如果无法满足要求，则需要重新继承 AbstractRules 方法
@@ -31,11 +35,15 @@ public class CommonRulesHandler extends AbstractRulesDecorator {
      */
 
 
-
+    /**
+     * 调用反馈引擎，将原始数据转换成税局需要的格式
+     *
+     * @param feedbackContext
+     */
     @Override
-    public void getPropertiesFromDB(FeedbackContext feedbackContext) {
+    public void invokeApocalypseEngine(FeedbackContext feedbackContext) {
 
-        //获取apocalypse_property表的数据
+        feedbackEngine.exchange(feedbackContext);
 
 
 

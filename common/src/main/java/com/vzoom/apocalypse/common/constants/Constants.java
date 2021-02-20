@@ -27,6 +27,7 @@ public class Constants {
 
     public static final String FEEDBACK_SUCCESS = "0000";
     public static final String FEEDBACK_FAIL = "9999";
+
     public static ConcurrentHashMap<String,String> cacheMap = new ConcurrentHashMap<>();
 
     /**

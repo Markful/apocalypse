@@ -35,7 +35,7 @@ public enum CommonEnum {
     }
 
     public static String getMessageByCode(String code) {
-        for (CommonEnum c : CommonEnum.values()) {
+        for (CommonEnum c : values()) {
             if (c.getCode().equals(code)) {
                 return c.message;
             }
@@ -44,7 +44,7 @@ public enum CommonEnum {
     }
 
     public static String getCodeByMessage(String message) {
-        for (CommonEnum c : CommonEnum.values()) {
+        for (CommonEnum c : values()) {
             if (c.getMessage().equals(message)) {
                 return c.code;
             }

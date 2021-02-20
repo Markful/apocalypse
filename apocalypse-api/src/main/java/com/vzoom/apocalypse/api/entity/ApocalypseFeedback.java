@@ -109,10 +109,10 @@ public class ApocalypseFeedback {
     private Date lrsj;
 
     /**
-     * 记录更新时间
+     * UPDATE_TIME
+     * 更新时间
      */
-    @TableField("UPDATETIME")
-    private Date updatetime;
-
+    @TableField("UPDATE_TIME")
+    private Date update_time;
 
 }

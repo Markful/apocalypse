@@ -36,8 +36,8 @@ public class FeedbackContext {
     /*反馈信息的原始报文 xxxx|xxxx|xxxx|xxxx....*/
     private String original_text;
 
-    /*反馈信息的处理后的报文xxxx|xxxx|xxxx|xxxx....*/
-    private String treated_text;
+    /*反馈信息的处理后的报文{xxxx：aaa,xxxx:bbb,xxxx:ccc,xxxx:ddd....}*/
+    private String treated_json;
 
     /*反馈信息的处理后的报文XML*/
     private String treated_xml;

@@ -1,21 +1,14 @@
 package com.vzoom.apocalypse.api.service.impl;
 
-import com.vzoom.apocalypse.api.entity.AnomalyLog;
+import com.vzoom.apocalypse.common.entity.AnomalyLog;
 import com.vzoom.apocalypse.api.repository.ProjectExceptionMapper;
 import com.vzoom.apocalypse.api.service.ExceptionService;
 import com.vzoom.apocalypse.common.constants.Constants;
-import com.vzoom.apocalypse.common.utils.ConvertUtils;
 import com.vzoom.apocalypse.common.utils.DateUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * 异常处理

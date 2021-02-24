@@ -2,9 +2,12 @@ package com.vzoom.apocalypse.api.strategy.child;
 
 import com.vzoom.apocalypse.api.service.ExceptionService;
 import com.vzoom.apocalypse.api.strategy.ReadFeedbackFileStrategy;
+import com.vzoom.apocalypse.common.utils.ConvertUtils;
+import com.vzoom.apocalypse.common.utils.FtpUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -18,15 +21,22 @@ public class ReadFtpFileServiceImpl implements ReadFeedbackFileStrategy {
     @Autowired
     private ExceptionService exceptionService;
 
+    @Value("${}")
+    private String FTP_HOST;
+
+    @Value("${}")
+    private Integer FTP_PORT;
+    @Value("${}")
+    private String FTP_LOGIN_NAME;
+    @Value("${}")
+    private String FTP_LOGIN_PASSWORD;
+
+
     @Override
     public List<String> readFeedbackData(String areaFilePath) throws IOException {
         log.info("读取ftp文件内容方法开始");
-        // 如果参数路径不为空则选择参数传来的路径读取
-        if (StringUtils.isNotBlank(areaFilePath)) {
-            FTP_FILE_PATH = areaFilePath;
-        }
         // 替换为日期
-        String url = replaceDate(FTP_FILE_PATH);
+        String url = ConvertUtils.replaceDate(areaFilePath);
         List<String> content = new ArrayList<>(128);
         String[] urlList = url.split(";");
         for (String u : urlList) {

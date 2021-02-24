@@ -1,33 +1,28 @@
 package com.vzoom.apocalypse.api.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
-import com.vzoom.apocalypse.api.config.InitContext;
 import com.vzoom.apocalypse.api.dto.FeedbackContext;
-import com.vzoom.apocalypse.api.entity.ApocalypseFeedback;
-import com.vzoom.apocalypse.api.entity.ApocalypseProperty;
 import com.vzoom.apocalypse.api.repository.FeedbackMapper;
 import com.vzoom.apocalypse.api.repository.PropertyMapper;
 import com.vzoom.apocalypse.api.service.FeedbackService;
-import com.vzoom.apocalypse.api.service.HandlerService;
+import com.vzoom.apocalypse.api.service.InvokeService;
 import com.vzoom.apocalypse.api.service.rules.CommonRulesHandler;
 import com.vzoom.apocalypse.api.strategy.ReadFeedbackFileStrategy;
 import com.vzoom.apocalypse.api.strategy.context.ReadFileContext;
+import com.vzoom.apocalypse.common.cache.CommonCache;
 import com.vzoom.apocalypse.common.config.Builder;
+import com.vzoom.apocalypse.common.entity.ApocalypseFeedback;
+import com.vzoom.apocalypse.common.entity.ApocalypseProperty;
 import com.vzoom.apocalypse.common.enums.CommonEnum;
-import com.vzoom.apocalypse.common.utils.Md5Util;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
-
-import static com.vzoom.apocalypse.api.config.CacheConfig.PROPERTY_CACHE_LIST;
 
 @Slf4j
 @Service
@@ -45,6 +40,9 @@ public class FeedbackServiceImpl implements FeedbackService {
     @Autowired
     private FeedbackMapper feedbackMapper;
 
+    @Autowired
+    private InvokeService invokeService;
+
     /**
      * 读取反馈文件，入库记录
      *
@@ -54,7 +52,7 @@ public class FeedbackServiceImpl implements FeedbackService {
     public void readFeedbackFile(String area) {
 
         //根据配置的策略 获取文件内容
-        List<ApocalypseProperty> properties = PROPERTY_CACHE_LIST.stream().filter(x -> x.getArea().equals(area)).collect(Collectors.toList());
+        List<ApocalypseProperty> properties = CommonCache.PROPERTY_CACHE_LIST.stream().filter(x -> x.getArea().equals(area)).collect(Collectors.toList());
 
         if(properties.isEmpty()){
             log.info("当前地区数据库中 缺失对应配置信息：{}",area);
@@ -89,17 +87,45 @@ public class FeedbackServiceImpl implements FeedbackService {
                     commonRulesHandler.HandleRules(feedbackContext);
 
                 }catch (Exception e){
-
+                    e.printStackTrace();
 
                 }
             }
 
-
         }
 
+    }
 
+
+
+    /**
+     * 推送反馈内容到datagrid，解析内容
+     * @param area
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public void pushFeedbackInfo(String area) throws Exception {
+
+        //查询出当前地区所有没有反馈的数据
+        QueryWrapper<ApocalypseFeedback> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("resp_code",CommonEnum.FEEDBACK_STATUS_1111.getCode());
+
+        //依次推送数据给到datagrid
+
+
+        //更新数据库内容
+
+
+
+/*        InvokeRequest request = invokeService.assembleRequestObject(collectContext);
+        log.info("[DataInvokeService] 调用 janus-s 请求报文: {}", JSON.toJSONString(request));
+        InvokeResponse response = janusSStub.invoke(request);
+
+        log.info("[DataInvokeService] 调用 janus-s 返回报文: {}", JSON.toJSONString(response));*/
 
     }
+
 
     /**
      * 根据不同的策略获取文件内容

@@ -1,5 +1,7 @@
 package com.vzoom.apocalypse.common.cache;
 
+import com.vzoom.apocalypse.common.entity.ApocalypseProperty;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -11,6 +13,9 @@ import java.util.List;
  */
 
 public class CommonCache {
+
+    /*配置文件 配置*/
+    public static List<ApocalypseProperty> PROPERTY_CACHE_LIST = new ArrayList<>(32);
 
     /*{地区：反馈文件字段(xxx|xxx|xxx)} 配置*/
     public static HashMap<String,String> areafieldPropertiesCache = new HashMap<>();

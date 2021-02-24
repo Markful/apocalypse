@@ -1,8 +1,5 @@
 package com.vzoom.apocalypse.api.quartz;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.vzoom.apocalypse.api.entity.ApocalypseAreaRules;
-import com.vzoom.apocalypse.api.entity.ApocalypseProperty;
 import com.vzoom.apocalypse.api.repository.PropertyMapper;
 import com.vzoom.apocalypse.api.service.ExceptionService;
 import com.vzoom.apocalypse.api.service.FeedbackService;
@@ -11,8 +8,6 @@ import lombok.extern.slf4j.Slf4j;
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import java.util.List;
 
 /**
  * @Description:
@@ -32,8 +27,11 @@ public class PostloanQuartz {
     @Autowired
     private ExceptionService exceptionService;
 
+    /**
+     * 读取反馈文件定时任务
+     */
 //    @Scheduled(cron = "${quartz.feedback.upload.cron}")
-    @SchedulerLock(name = "read_feedback_file", lockAtLeastFor = "10m", lockAtMostFor = "20m")
+//    @SchedulerLock(name = "read_feedback_file", lockAtLeastFor = "10m", lockAtMostFor = "20m")
     public void readFeedbackFile(){
 
         for (String area : CommonCache.areaList) {
@@ -50,14 +48,27 @@ public class PostloanQuartz {
 
     }
 
-
+    /**
+     * 推送反馈文件定时任务
+     */
     @SchedulerLock(name = "push_feedback_file", lockAtLeastFor = "10m", lockAtMostFor = "20m")
     public void pushFeedbackFile(){
 
+        for (String area : CommonCache.areaList) {
+            //TODO 判断当前地区是否推送反馈
 
+            try {
+                feedbackService.pushFeedbackInfo(area);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
 
     }
 
+    /**
+     * 读取贷后名单定时任务
+     */
     @SchedulerLock(name = "read_postloan_file", lockAtLeastFor = "10m", lockAtMostFor = "20m")
     public void readPostloanFile(){
 
@@ -65,6 +76,10 @@ public class PostloanQuartz {
 
     }
 
+
+    /**
+     * 推送贷后名单
+     */
     @SchedulerLock(name = "push_postloan_file", lockAtLeastFor = "10m", lockAtMostFor = "20m")
     public void pushPostloanFile(){
 

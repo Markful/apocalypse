@@ -2,15 +2,14 @@ package com.vzoom.apocalypse.api.strategy.child;
 
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.SftpException;
+import com.vzoom.apocalypse.api.service.ExceptionService;
 import com.vzoom.apocalypse.api.strategy.ReadFeedbackFileStrategy;
 import com.vzoom.apocalypse.common.utils.ConvertUtils;
 import com.vzoom.apocalypse.common.utils.SftpUtils;
-import com.vzoom.zxxt.service.AnomalyService;
-import com.vzoom.zxxt.strategy.ReadFeedbackFileStrategy;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
@@ -18,28 +17,35 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.vzoom.zxxt.util.GlobalVariable.replaceDate;
-import static com.vzoom.zxxt.util.ReadFileConfigConstant.*;
 
 /**
  * @author wans
  */
 @Service
+@Slf4j
 public class ReadSftpFileServiceImpl implements ReadFeedbackFileStrategy {
-    private static final Logger log = LoggerFactory.getLogger(ReadSftpFileServiceImpl.class);
 
     @Autowired
-    private AnomalyService anomalyService;
+    private ExceptionService exceptionService;
+
+    @Value("${}")
+    private String SFTP_HOST;
+    @Value("${}")
+    private Integer SFTP_PORT;
+    @Value("${}")
+    private String SFTP_USERNAME;
+    @Value("${}")
+    private String SFTP_PASSWORD;
+    @Value("${}")
+    private String SFTP_KEY_PATH;
+
 
     @Override
     public List<String> readFeedbackData(String areaFilePath) throws JSchException, SftpException, IOException {
         log.info("读取sftp文件内容方法开始");
-        // 如果参数路径不为空则选择参数传来的路径读取
-        if (StringUtils.isNotBlank(areaFilePath)) {
-            SFTP_PATH_LIST = areaFilePath;
-        }
+
         // 替换为日期
-        String url = ConvertUtils.replaceDate(SFTP_PATH_LIST);
+        String url = ConvertUtils.replaceDate(areaFilePath);
         SftpUtils sftp = new SftpUtils(SFTP_HOST, SFTP_USERNAME, SFTP_PASSWORD,SFTP_PORT,SFTP_KEY_PATH);
         log.info("SFTPUtils：" + sftp);
         InputStream is = null;
@@ -69,7 +75,7 @@ public class ReadSftpFileServiceImpl implements ReadFeedbackFileStrategy {
                 // 不抛出异常，添加异常日志
                 String exceptionMsg = "读取sftp文件出现异常：" + e.getMessage() + e.toString();
                 log.info(exceptionMsg);
-                anomalyService.insertAnomalyLogByException(e, exceptionMsg);
+                exceptionService.insertAnomalyLogByException(e, exceptionMsg);
             } finally {
                 try {
                     if (br != null) {

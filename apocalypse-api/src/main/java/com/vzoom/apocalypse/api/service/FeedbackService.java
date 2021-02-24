@@ -5,6 +5,6 @@ public interface FeedbackService {
 
     void readFeedbackFile(String area);
 
-
+    void pushFeedbackInfo(String area) throws Exception;
 
 }

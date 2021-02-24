@@ -6,11 +6,15 @@ import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static com.vzoom.apocalypse.common.constants.Constants.SPEL_METHOD_TRIM_2;
+import static java.util.regex.Pattern.compile;
 
 /**
  * @Description:
@@ -48,8 +52,8 @@ public class TestDemo {
     @Test
     public void test1234(){
 
-        String arg = "000001000.00";
-        String rule = "trim_0:${dkje}";
+        String arg = "+01000.00";
+        String rule = "trim_1:${dkje}";
         String columnName = "dkje";
 
         if(rule.contains("trim:")){
@@ -58,21 +62,61 @@ public class TestDemo {
         }else if(rule.contains("trim_0:")){
             //去掉所有正负号和最前面的0，不会改动小数位
             arg = arg.trim();
-            arg = arg.replaceAll("\\+","").replaceAll("-","").replaceAll("^(0+)","");
-
+//            arg = arg.replaceAll("^(\\-|\\+|)(0+)","");
+            arg = arg.replaceAll("^(\\-)(0+)","-").replaceAll("^(\\+)(0+)","+").replaceAll("^(0+)","");
+//.replaceAll("\\+(0+)","+").replaceAll("(0+)","")
+//.replaceAll("\\+","").replaceAll("-","")
         }else if(rule.contains("trim_1:")){
-
+            arg = arg.replaceAll("\\.[0-9]+","");
 
 
         }else if(rule.contains("expand")){
 
 
+        }
 
+        System.out.println(arg);
+
+        System.out.println("  123  ".trim());
+        System.out.println("  12  3  ".trim());
+        System.out.println("  12  3".replaceAll("\\s",""));
+
+
+        Pattern pattern = compile("\\((.*?)\\)");
+        Matcher m = pattern.matcher("date_0(yyyy-mm-dd,yyyymmdd)");
+        if(m.find()){
+            System.out.println(m.group(1));
         }
 
 
+    }
 
-        System.out.println(arg);
+
+    @Test
+    public void test33(){
+        String originalField = "34.34345567";
+        String encryptXml = "2222";
+        Pattern pattern = Pattern.compile("\\((\\d+)\\)");
+        Matcher m = pattern.matcher("trim_2(3)");
+        if(m.find()){
+            encryptXml = m.group(1);
+        }
+        System.out.println(encryptXml);
+        int count = Integer.parseInt(encryptXml);
+        if (count < 0) {
+            throw new IllegalArgumentException("The scale must be a positive integer or zero");
+        }else if(count == 0){
+            originalField = new DecimalFormat("0").format(Double.valueOf(originalField)*10000);
+        }else {
+            StringBuilder formatStr = new StringBuilder("0.");
+            for (int k = 0; k < count; k++) {
+                formatStr.append("0");
+            }
+            originalField = new DecimalFormat(formatStr.toString()).format(Double.valueOf(originalField)*10000);
+        }
+        System.out.println(originalField);
+/*        String[] split = "trim_2(3)".split("^"+SPEL_METHOD_TRIM_2+"([0-9]+)");
+        System.out.println(split[0]);*/
     }
 
     @Test

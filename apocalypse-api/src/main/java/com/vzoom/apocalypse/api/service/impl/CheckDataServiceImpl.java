@@ -1,14 +1,12 @@
 package com.vzoom.apocalypse.api.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.vzoom.apocalypse.api.config.CacheConfig;
-import com.vzoom.apocalypse.api.config.FeedbackProperties;
-import com.vzoom.apocalypse.api.entity.ApocalypseAreaRules;
-import com.vzoom.apocalypse.api.entity.ApocalypseProperty;
 import com.vzoom.apocalypse.api.repository.AreaRulesMapper;
 import com.vzoom.apocalypse.api.repository.PropertyMapper;
 import com.vzoom.apocalypse.api.service.CheckDataService;
 import com.vzoom.apocalypse.common.cache.CommonCache;
+import com.vzoom.apocalypse.common.entity.ApocalypseAreaRules;
+import com.vzoom.apocalypse.common.entity.ApocalypseProperty;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -91,7 +89,7 @@ public class CheckDataServiceImpl implements CheckDataService {
     @Override
     public void loadAreaFieldProperties(){
         QueryWrapper<ApocalypseProperty> wrapper = new QueryWrapper<>();
-        CacheConfig.PROPERTY_CACHE_LIST = propertyMapper.selectList(wrapper);
+        CommonCache.PROPERTY_CACHE_LIST = propertyMapper.selectList(wrapper);
     }
 
     /**

@@ -1,6 +1,6 @@
 package com.vzoom.apocalypse.api.service;
 
-import com.vzoom.apocalypse.api.entity.ApocalypseProperty;
+import com.vzoom.apocalypse.common.entity.ApocalypseProperty;
 
 public interface HandlerService {
 

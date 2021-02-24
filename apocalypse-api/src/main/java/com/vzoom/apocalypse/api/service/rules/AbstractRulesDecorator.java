@@ -2,11 +2,9 @@ package com.vzoom.apocalypse.api.service.rules;
 
 import com.vzoom.apocalypse.api.dto.FeedbackContext;
 import com.vzoom.apocalypse.api.service.AreaRules;
-import com.vzoom.apocalypse.api.service.HandlerService;
+import com.vzoom.apocalypse.api.service.FeedbackMapperManager;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
-
-import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * 模板方法
@@ -17,6 +15,9 @@ import java.util.List;
  */
 @Slf4j
 public abstract class AbstractRulesDecorator  implements AreaRules {
+
+    @Autowired
+    private FeedbackMapperManager feedbackMapperManager;
 
 
     /**
@@ -33,14 +34,19 @@ public abstract class AbstractRulesDecorator  implements AreaRules {
         //根据地区模板，组装XML报文
         packagingXmlFromFreemarker(feedbackContext);
 
+        //入库
+        saveDataToFeedback(feedbackContext);
+
         //请求datagrid入口网关，反馈给税局
-        invokeDatagrid(feedbackContext);
+//        invokeDatagrid(feedbackContext);
 
     };
 
     public abstract void invokeApocalypseEngine(FeedbackContext feedbackContext);
 
     public abstract String packagingXmlFromFreemarker(FeedbackContext feedbackContext);
+
+    public abstract String saveDataToFeedback(FeedbackContext feedbackContext);
 
     public abstract String invokeDatagrid(FeedbackContext feedbackContext);
 

@@ -23,6 +23,14 @@ public enum CommonEnum {
     FEEDBACK_STRATEGY_TXT("txt",""),
     FEEDBACK_STRATEGY_TXT_ZIP("txt_zip",""),
 
+    FEEDBACK_STATUS_0000("0000","反馈成功"),
+    FEEDBACK_STATUS_9999("9999","反馈失败"),
+    FEEDBACK_STATUS_1111("1111","初始入库"),
+    FEEDBACK_STATUS_2222("2222","正在反馈"),
+    FEEDBACK_STATUS_3333("3333","网络异常"),
+    FEEDBACK_STATUS_4444("4444","参数错误")
+
+
     ;
 
 

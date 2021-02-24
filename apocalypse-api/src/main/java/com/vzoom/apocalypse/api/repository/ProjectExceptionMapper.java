@@ -2,7 +2,7 @@ package com.vzoom.apocalypse.api.repository;
 
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.vzoom.apocalypse.api.entity.AnomalyLog;
+import com.vzoom.apocalypse.common.entity.AnomalyLog;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 

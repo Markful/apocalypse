@@ -1,4 +1,4 @@
-package com.vzoom.apocalypse.api.entity;
+package com.vzoom.apocalypse.common.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;

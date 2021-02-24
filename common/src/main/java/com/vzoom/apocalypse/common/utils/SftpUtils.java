@@ -5,9 +5,8 @@ import com.jcraft.jsch.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.io.InputStream;
@@ -22,8 +21,8 @@ import java.util.Vector;
 @ToString
 @Data
 @AllArgsConstructor
+@Slf4j
 public class SftpUtils {
-    private static final Logger log = LoggerFactory.getLogger(SftpUtils.class);
     /** 服务器连接ip */
     private String host;
     /** 用户名 */

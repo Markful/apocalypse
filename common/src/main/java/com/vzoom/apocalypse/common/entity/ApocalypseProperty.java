@@ -1,7 +1,9 @@
-package com.vzoom.apocalypse.api.entity;
+package com.vzoom.apocalypse.common.entity;
 
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -20,6 +22,7 @@ public class ApocalypseProperty {
      * UUID*
      */
     @TableField("ID")
+    @TableId(type = IdType.UUID)
     private String id;
 
     /**
@@ -28,6 +31,12 @@ public class ApocalypseProperty {
      */
     @TableField("AREA")
     private String area;
+
+    /**
+     * MINISTRY_CODE，与datagrid中的配置一致
+     */
+    @TableField("MINISTRY_CODE")
+    private String ministry_code;
 
     /**
      * PRODUCT_ID
@@ -84,12 +93,23 @@ public class ApocalypseProperty {
     private String postloan_strategy;
 
     /**
+     * 模板类型（如果一个税局有多个请求模板，可以通过此字段进行区分）
+     */
+    @TableField("TEMPLATE_TYPE")
+    private String template_type;
+
+
+    /**
+     * 模板表达式
+     */
+    @TableField("REQUEST_TEMPLATE")
+    private String request_template;
+
+    /**
      * LRSJ
      * 录入时间
      */
     @TableField("LRSJ")
     private Date lrsj;
-
-
 
 }

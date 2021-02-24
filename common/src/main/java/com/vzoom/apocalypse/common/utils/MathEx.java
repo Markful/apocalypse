@@ -1,7 +1,6 @@
 package com.vzoom.apocalypse.common.utils;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.*;
 import java.util.Map.Entry;
@@ -10,9 +9,8 @@ import java.util.concurrent.ThreadLocalRandom;
 /**
  * 数学工具类
  */
+@Slf4j
 public class MathEx {
-
-    private static Logger LOGGER = LoggerFactory.getLogger(MathEx.class);
 
     /**
      * 转Int
@@ -309,7 +307,7 @@ public class MathEx {
         } else {
             drop = certainly > 0;
         }
-        if (LOGGER.isDebugEnabled()) {
+        if (log.isDebugEnabled()) {
         }
         return drop;
     }
@@ -327,7 +325,7 @@ public class MathEx {
     private static int checkCertainly(int time, int num, int extra, int currentTime, int currentNum) {
         int validNum = ((currentTime / time) + 1) * num;
         int moreTime = currentTime % time;
-        if (LOGGER.isDebugEnabled()) {
+        if (log.isDebugEnabled()) {
         }
         if (currentNum < validNum) {
             if (moreTime >= (time - num)) {
@@ -359,7 +357,7 @@ public class MathEx {
         } else {
             drop = certainly > 0;
         }
-        if (LOGGER.isDebugEnabled()) {
+        if (log.isDebugEnabled()) {
         }
         return drop;
     }

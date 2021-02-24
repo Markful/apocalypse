@@ -1,6 +1,8 @@
-package com.vzoom.apocalypse.api.entity;
+package com.vzoom.apocalypse.common.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
@@ -18,13 +20,33 @@ public class ApocalypseFeedback {
      * UUID*
      */
     @TableField("ID")
+    @TableId(type = IdType.UUID)
     private String id;
+
+
+    /**
+     * TICKET_ID
+     */
+    @TableField("TICKET_ID")
+    private String ticket_id;
 
     /**
      * 请求流水
      */
     @TableField("REQ_NO")
     private String req_no;
+
+    /**
+     * AREA
+     */
+    @TableField("AREA")
+    private String area;
+
+    /**
+     * MINISTRY_CODE，与datagrid中的配置一致
+     */
+    @TableField("MINISTRY_CODE")
+    private String ministry_code;
 
     /**
      * md5值
@@ -53,18 +75,16 @@ public class ApocalypseFeedback {
 
     /**
      * 反馈信息的处理后的报文
-     * xxxx|xxxx|xxxx|xxxx....
+     * {"nsrsbh":"","xxxx":"111","vvvv":"2222"}....
      */
-    @TableField("TREATED_TEXT")
-    private String treated_text;
-
+    @TableField("TREATED_JSON")
+    private String treated_json;
 
     /**
-     * 反馈信息 流向：税局接口标识
-     * （用于区分反馈给税局的接口类型，每个税局每个接口都应该有值）
+     * 调用税局的原始明文报文
      */
-    @TableField("TARGET")
-    private String target;
+    @TableField("TREATED_XML")
+    private String treated_xml;
 
     /**
      * 反馈 datagrid 的报文
@@ -73,13 +93,21 @@ public class ApocalypseFeedback {
     private String request_json;
 
     /**
+     * 反馈信息 流向：税局接口标识
+     * （用于区分反馈给税局的接口类型，每个税局每个接口都应该有值）
+     */
+    @TableField("TARGET")
+    private String target;
+
+
+    /**
      * 统一状态码
      * 反馈成功：0000
      * 反馈失败：9999
-     * 参数错误：1111
+     * 初始入库: 1111
      * 正在反馈：2222
      * 网络异常：3333
-     *
+     * 参数错误：4444
      */
     @TableField("RESP_CODE")
     private String resp_code;
@@ -114,5 +142,8 @@ public class ApocalypseFeedback {
      */
     @TableField("UPDATE_TIME")
     private Date update_time;
+
+
+
 
 }

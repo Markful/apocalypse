@@ -1,8 +1,10 @@
 package com.vzoom.apocalypse.api.dto;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.Data;
 
 import java.util.Date;
+import java.util.Map;
 
 /**
  * @Description:
@@ -15,11 +17,14 @@ public class FeedbackContext {
     /*数据库id*/
     private String id;
 
-    /*地区编码，对应数据库处理规则*/
+    /*地区名称，对应数据库处理规则*/
     private String area;
 
     /*请求流水*/
     private String req_no;
+
+    /*地区编码*/
+    private String ministry_code;
 
     /*产品id*/
     private String product_id;
@@ -39,8 +44,14 @@ public class FeedbackContext {
     /*反馈信息的处理后的报文{xxxx：aaa,xxxx:bbb,xxxx:ccc,xxxx:ddd....}*/
     private String treated_json;
 
+    /*处理后的反馈Map，用于拼装模板*/
+    private Map feedbackMap;
+
     /*反馈信息的处理后的报文XML*/
     private String treated_xml;
+
+    /*发送给datagrid的报文*/
+    private String request_json;
 
     /*反馈信息 流向：税局接口标识（用于区分反馈给税局的接口类型，每个税局每个接口都应该有值）*/
     private String target;
@@ -82,6 +93,12 @@ public class FeedbackContext {
      * 如果是ZIP，则自动识别解压缩
      */
     private String postloan_strategy;
+
+    /*模板类型，如果税局反馈模板有多个，需要通过配置此字段来实现不同的模板*/
+    private String template_type;
+
+    /*模板表达式*/
+    private String request_template;
 
     /*录入时间*/
     private Date lrsj;

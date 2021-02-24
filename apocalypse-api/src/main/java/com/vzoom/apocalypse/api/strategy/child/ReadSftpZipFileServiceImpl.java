@@ -2,14 +2,14 @@ package com.vzoom.apocalypse.api.strategy.child;
 
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.SftpException;
+import com.vzoom.apocalypse.api.service.ExceptionService;
+import com.vzoom.apocalypse.api.strategy.ReadFeedbackFileStrategy;
+import com.vzoom.apocalypse.common.utils.ConvertUtils;
 import com.vzoom.apocalypse.common.utils.FtpUtil;
-import com.vzoom.zxxt.service.AnomalyService;
-import com.vzoom.zxxt.strategy.ReadFeedbackFileStrategy;
-import com.vzoom.zxxt.util.SftpUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.vzoom.apocalypse.common.utils.SftpUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
@@ -17,34 +17,40 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.ZipInputStream;
 
-import static com.vzoom.zxxt.util.GlobalVariable.replaceDate;
-import static com.vzoom.zxxt.util.ReadFileConfigConstant.*;
 
 /**
  * @author wans
  */
 @Service
+@Slf4j
 public class ReadSftpZipFileServiceImpl implements ReadFeedbackFileStrategy {
-    private static final Logger log = LoggerFactory.getLogger(ReadSftpZipFileServiceImpl.class);
 
     @Autowired
-    private AnomalyService anomalyService;
+    private ExceptionService exceptionService;
 
-    static void closeStream(SftpUtils sftp, InputStream is, Reader rd, BufferedReader br) {
+    @Value("${}")
+    private String SFTP_HOST;
 
-    }
+    @Value("${}")
+    private Integer SFTP_PORT;
+    @Value("${}")
+    private String SFTP_USERNAME;
+    @Value("${}")
+    private String SFTP_PASSWORD;
+    @Value("${}")
+    private String SFTP_KEY_PATH;
 
     @Override
     public List<String> readFeedbackData(String areaFilePath) throws IOException, SftpException, JSchException {
         log.info("读取sftp压缩文件内容方法开始");
-        SftpUtils sftp = getSftpUtils(areaFilePath);
+        SftpUtils sftp = getSftpUtils();
         InputStream is = null;
         BufferedReader br = null;
         Reader rd = null;
         ZipInputStream zin = null;
         List<String> result = new ArrayList<>(128);
         // 替换为日期
-        String url = replaceDate(SFTP_PATH_LIST);
+        String url = ConvertUtils.replaceDate(areaFilePath);
         String[] urlList = url.split(";");
         for (String u : urlList) {
             try {
@@ -65,7 +71,7 @@ public class ReadSftpZipFileServiceImpl implements ReadFeedbackFileStrategy {
                 // 不抛出异常，添加异常日志
                 String exceptionMsg = "读取sftp压缩文件出现异常：" + e.getMessage() + e.toString();
                 log.info(exceptionMsg);
-                anomalyService.insertAnomalyLogByException(e, exceptionMsg);
+                exceptionService.insertAnomalyLogByException(e, exceptionMsg);
             } finally {
                 if (zin != null) {
                     zin.close();
@@ -98,11 +104,7 @@ public class ReadSftpZipFileServiceImpl implements ReadFeedbackFileStrategy {
         return result;
     }
 
-    private SftpUtils getSftpUtils(String areaFilePath) {
-        // 如果参数路径不为空则选择参数传来的路径读取
-        if (StringUtils.isNotBlank(areaFilePath)) {
-            SFTP_PATH_LIST = areaFilePath;
-        }
+    private SftpUtils getSftpUtils() {
         SftpUtils sftp = new SftpUtils(SFTP_HOST, SFTP_USERNAME, SFTP_PASSWORD,SFTP_PORT,SFTP_KEY_PATH);
         log.info("SFTPUtils：" + sftp);
         return sftp;

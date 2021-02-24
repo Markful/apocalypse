@@ -1,6 +1,8 @@
-package com.vzoom.apocalypse.api.entity;
+package com.vzoom.apocalypse.common.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -21,6 +23,7 @@ public class ApocalypseAreaRules {
      * UUID*
      */
     @TableField("ID")
+    @TableId(type = IdType.UUID)
     private String id;
 
     /**
@@ -37,20 +40,26 @@ public class ApocalypseAreaRules {
     private String area;
 
     /**
-     * FEEDBACK_field
-     * nsrsbh/nsrmc....
+     * MINISTRY_CODE，与datagrid中的配置一致
      */
-    @TableField("FEEDBACK_field")
+    @TableField("MINISTRY_CODE")
+    private String ministry_code;
+
+    /**
+     * FEEDBACK_field
+     * nsrsbh|nsrmc|dkje....
+     */
+    @TableField("FEEDBACK_FIELD")
     private String feedback_field;
+
 
     /**
      * RULE_EXPRESSION（使用spel表达式）
      * 为空表示完全根据银行传入的字段，不进行处理
-     * 类似：if(${dkje} == 0){${spjg}=1}
+     *
      */
     @TableField("RULE_EXPRESSION")
     private String rule_expression;
-
 
     /**
      * LRSJ
@@ -58,7 +67,5 @@ public class ApocalypseAreaRules {
      */
     @TableField("LRSJ")
     private String lrsj;
-
-
 
 }

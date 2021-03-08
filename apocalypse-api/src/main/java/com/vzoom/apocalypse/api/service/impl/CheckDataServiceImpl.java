@@ -1,27 +1,27 @@
 package com.vzoom.apocalypse.api.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.vzoom.apocalypse.api.repository.AreaRulesMapper;
-import com.vzoom.apocalypse.api.repository.PropertyMapper;
 import com.vzoom.apocalypse.api.service.CheckDataService;
 import com.vzoom.apocalypse.common.cache.CommonCache;
+import com.vzoom.apocalypse.common.constants.Constants;
 import com.vzoom.apocalypse.common.entity.ApocalypseAreaRules;
 import com.vzoom.apocalypse.common.entity.ApocalypseProperty;
+import com.vzoom.apocalypse.common.repositories.AreaRulesMapper;
+import com.vzoom.apocalypse.common.repositories.PropertyMapper;
+import com.vzoom.apocalypse.common.utils.ConvertUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
-import java.util.ArrayList;
-import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
-import java.util.TreeSet;
+import java.util.Map;
 import java.util.stream.Collectors;
 
-import static com.vzoom.apocalypse.api.config.CacheConfig.RULES_MAP;
-import static com.vzoom.apocalypse.common.cache.CommonCache.areafieldPropertiesCache;
+import static com.vzoom.apocalypse.common.cache.CommonCache.*;
 
 /**
  * @Description:
@@ -38,8 +38,41 @@ public class CheckDataServiceImpl implements CheckDataService {
     @Autowired
     private PropertyMapper propertyMapper;
 
-    @Autowired
-    private Environment environment;
+    /**
+     * 1、获取所有已经配置了数据的地区，放入缓存
+     * 2、获取apocalypse_property 表中所有地区的 字段的顺序的配置，存入缓存
+     * key:area
+     * value:nsrsbh|nsrmc|xxx|....
+     */
+    @Override
+    public void loadAreaField(){
+
+        QueryWrapper<ApocalypseProperty> wrapper = new QueryWrapper<>();
+        List<ApocalypseProperty> apocalypseProperties = propertyMapper.selectList(wrapper);
+
+        //去重得到所有配置的地区,只过滤得到不重复的area字段
+        List<ApocalypseProperty> collect = apocalypseProperties.stream().filter(x -> StringUtils.isNotEmpty(x.getArea()) && Constants.AGREE_Y.equals(x.getUsedFlag()))
+                .collect(Collectors.toList());
+
+        //读取所有配置文件的地区，存入缓存
+        for (ApocalypseProperty areaProperty : collect) {
+            String area = areaProperty.getArea();
+            String property = areaProperty.getFeedbackParam();
+            String bankTaxParam = areaProperty.getBankTaxParam();
+            if(StringUtils.isNotEmpty(bankTaxParam)){
+                Map map = ConvertUtils.fromJsonToMap(bankTaxParam);
+                CommonCache.BANK_TAX_PARAM_MAP.put(area,map);
+            }
+
+            if(StringUtils.isNotEmpty(area) && null != property){
+                log.info("添加 {} 地区反馈配置 信息:{}",area,areaProperty);
+                CommonCache.AREA_LIST.add(area);
+                CommonCache.AREAFIELD_PROPERTIES_CACHE.put(area,property);
+                PROPERTY_CACHE_MAP.put(area,areaProperty);
+            }
+        }
+
+    }
 
     /**
      * 检查配置的数据完整性
@@ -53,7 +86,7 @@ public class CheckDataServiceImpl implements CheckDataService {
         QueryWrapper<ApocalypseAreaRules> wrapper = new QueryWrapper<>();
 
         //参数数量检查
-        for (String area : areafieldPropertiesCache.keySet()) {
+        for (String area : AREAFIELD_PROPERTIES_CACHE.keySet()) {
             //获取当前地区所有字段的规则
             log.info("当前配置校验地区：{}",area);
             wrapper.eq("area",area);
@@ -63,62 +96,36 @@ public class CheckDataServiceImpl implements CheckDataService {
                 return false;
             }
             RULES_MAP.put(area,areaRulesList);
-            /* 数据库中 只需要配置 需要进行EL表达式替换的参数
-            //获取地区配置的分隔符
-            String areaPropreties = areafieldPropertiesCache.get(area);
-            String separator = areaPropreties.split("[A-Za-z0-9]+")[0];
-            //获取每个参数
-            String[] split = areaPropreties.split(separator);
-            for (String column : split) {
-                if(StringUtils.isNotEmpty(column)){
-                    if(areaRulesList.stream().noneMatch(x -> x.getFeedback_field().equals(column))){
-                        //如果对应字段不存在，则说明表中没有配置对应字段的规则
-                        log.error("表中未配置 {} 地区，{} 字段的规则，请重新配置",area,column);
-                        return false;
-                    }
-                }
-            }*/
+            log.info("{} 规则校验通过",area);
+
+        }
+
+        log.info("规则表检查：apocalypse_property");
+        for (ApocalypseProperty property : PROPERTY_CACHE_MAP.values()) {
+            if (!checkPropertyParam(property)) {
+                log.error("配置参数缺失或格式错误，地区：{},配置参数：{}", property.getArea(), property);
+                break;
+            }
         }
 
         return true;
     }
 
     /**
-     * 获取相关配置参数
+     * 检查 apocalypse_property 字段是否满足规则要求
+     * @param property
+     * @return
      */
-    @Override
-    public void loadAreaFieldProperties(){
-        QueryWrapper<ApocalypseProperty> wrapper = new QueryWrapper<>();
-        CommonCache.PROPERTY_CACHE_LIST = propertyMapper.selectList(wrapper);
+    private boolean checkPropertyParam(ApocalypseProperty property) {
+
+        Assert.notNull(property.getMinistryCode(),"ministry_code 不允许为空");
+        Assert.notNull(property.getFeedbackStrategy(),"feedback_strategy 不允许为空");
+        Assert.notNull(property.getFeedbackParam(),"feedback_param 不允许为空");
+        Assert.notNull(property.getTransportType(),"transport_type 不允许为空");
+        Assert.isTrue(property.getFeedbackParam().contains(Constants.NSRSBH),"feedback_param 必须要包含字段nsrsbh");
+
+        return true;
     }
 
-    /**
-     * 获取配置文件中所有地区的 字段的顺序的配置，存入缓存
-     * key:area
-     * value:nsrsbh|nsrmc|xxx|....
-     */
-    @Override
-    public void loadAreaField(){
-
-        QueryWrapper<ApocalypseAreaRules> wrapper = new QueryWrapper<>();
-        List<ApocalypseAreaRules> apocalypseAreaRules = areaRulesMapper.selectList(wrapper);
-
-        //去重得到所有配置的地区,只过滤得到不重复的area字段
-        List<ApocalypseAreaRules> collect = apocalypseAreaRules.stream().filter(x -> StringUtils.isNotEmpty(x.getArea())).collect(
-                Collectors.collectingAndThen(
-                        Collectors.toCollection(() -> new TreeSet<>(Comparator.comparing(ApocalypseAreaRules::getArea))), ArrayList::new)
-        );
-
-        //读取所有配置文件的地区，存入缓存
-        for (ApocalypseAreaRules areaRules : collect) {
-            String area = areaRules.getArea();
-            String property = environment.getProperty("feedback.param." + area);
-            if(StringUtils.isNotEmpty(area) && null != property){
-                CommonCache.areaList.add(area);
-                CommonCache.areafieldPropertiesCache.put(area,property);
-            }
-        }
-
-    }
 
 }

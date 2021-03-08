@@ -2,6 +2,7 @@ package com.vzoom.apocalypse.api.controller;
 
 import com.vzoom.apocalypse.api.quartz.PostloanQuartz;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,7 +25,8 @@ public class TestController {
     private PostloanQuartz postloanQuartz;
 
     @GetMapping("/test")
-    public void test1(@RequestParam(name = "type") String type, @RequestParam(name = "content") String content){
+    @ApiOperation(value = "type:1-读取反馈，2-推送反馈，3-读取贷后，4-推送贷后。", httpMethod = "GET")
+    public void test1(@RequestParam(name = "type") String type){
 
         switch (type) {
             case "1":
@@ -32,18 +34,18 @@ public class TestController {
                 postloanQuartz.readFeedbackFile();
                 break;
             case "2":
-                //推送反馈信息
+                //推送反馈信息给datagrid
                 postloanQuartz.pushFeedbackFile();
                 break;
 
             case "3":
-                //处理贷后名单
+                //处理贷后名单，并推送给datagrid
                 postloanQuartz.readPostloanFile();
                 break;
 
             case "4":
-                //推送贷后名单
-                postloanQuartz.pushPostloanFile();
+                //重推贷后名单
+                postloanQuartz.rePushRecord();
                 break;
 
 

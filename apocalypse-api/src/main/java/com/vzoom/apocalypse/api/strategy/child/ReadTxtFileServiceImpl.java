@@ -42,7 +42,7 @@ public class ReadTxtFileServiceImpl implements ReadFeedbackFileStrategy {
                 reader = new InputStreamReader(is, StandardCharsets.UTF_8);
                 bufferedReader = new BufferedReader(reader);
                 String line;
-                while ((line = bufferedReader.readLine()) != null) {
+                while (StringUtils.isNotEmpty(line = bufferedReader.readLine())) {
                     log.info("txt文件返回内容：" + line);
                     if (StringUtils.isBlank(line)) {
                         // 返回为空跳过

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.vzoom.apocalypse.common.repositories.BankFeedbackMapper">
+
+    <select id="selectNsrjcxx" resultType="java.lang.Integer"
+            parameterType="java.lang.String">
+        select count(0) from ZX_NSRJCXX where NSRSBH =#{nsrsbh,jdbcType=VARCHAR}
+    </select>
+
+    <select id="selectFeedbackList" parameterType="String" resultType="com.vzoom.apocalypse.common.entity.ApocalypseFeedback">
+	      ${sqlStr}
+	</select>
+
+    <select id="queryRecentlyBatchNumber" resultType="java.lang.String">
+        select  Max(BATCH_NUMBER)  from AFTERLOAN_ROSTER_GENERAL
+    </select>
+
+    <select id="invokeProcedure" statementType="CALLABLE" parameterType="string">
+        {call ${procedureName}(
+        #{map.nsrsbh,mode=IN,jdbcType=VARCHAR},
+        #{map.md5,mode=IN,jdbcType=VARCHAR},
+        #{map.out,mode=OUT,jdbcType=INTEGER}
+        )}
+    </select>
+    <insert id="insert_anomaly_log" parameterType="java.util.HashMap">
+       insert into Zx_Anomaly_Log(
+									nsrsbh,
+									excep_code,
+									excep_msg,
+									excep_time)
+									values(
+									#{nsrsbh,jdbcType=VARCHAR},
+									#{excepCode,jdbcType=VARCHAR},
+									#{excepMsg,jdbcType=VARCHAR},
+									#{excepTime,jdbcType=VARCHAR}
+							       )
+    </insert>
+
+</mapper>

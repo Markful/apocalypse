@@ -1,15 +1,17 @@
 package com.vzoom.apocalypse.api.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
-import com.vzoom.apocalypse.api.config.CacheConfig;
-import com.vzoom.apocalypse.api.dto.FeedbackContext;
+import com.vzoom.apocalypse.common.dto.FeedbackContext;
+import com.vzoom.apocalypse.common.cache.CommonCache;
 import com.vzoom.apocalypse.common.entity.ApocalypseAreaRules;
-import com.vzoom.apocalypse.api.service.FeedbackEngine;
+import com.vzoom.apocalypse.common.service.FeedbackEngine;
 import com.vzoom.apocalypse.common.constants.Constants;
+import com.vzoom.apocalypse.common.enums.CommonEnum;
 import com.vzoom.apocalypse.common.utils.ConvertUtils;
 import com.vzoom.apocalypse.common.utils.DateUtil;
 import com.vzoom.apocalypse.common.utils.Md5Util;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.stereotype.Service;
@@ -22,7 +24,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.vzoom.apocalypse.common.cache.CommonCache.areafieldPropertiesCache;
+import static com.vzoom.apocalypse.common.cache.CommonCache.AREAFIELD_PROPERTIES_CACHE;
 import static com.vzoom.apocalypse.common.constants.Constants.*;
 import static java.util.regex.Pattern.compile;
 
@@ -46,7 +48,7 @@ public class FeedbackEngineImpl implements FeedbackEngine {
     @Override
     public void exchange(FeedbackContext context) throws Exception {
 
-        String originalText = context.getOriginal_text();
+        String originalText = context.getOriginalText();
 
         //自动识别 反馈文件 分隔符
         String separatorRegex = ConvertUtils.findSeparator(originalText);
@@ -56,18 +58,18 @@ public class FeedbackEngineImpl implements FeedbackEngine {
         String[] feedbackArray = originalText.split(separatorRegex);
 
         //解析配置文件的字段顺序
-        String propertyField = areafieldPropertiesCache.get(context.getArea());
+        String propertyField = AREAFIELD_PROPERTIES_CACHE.get(context.getArea());
         String separatorRegex2 = ConvertUtils.findSeparator(propertyField);
-        String[] feedbackCol = originalText.split(separatorRegex2);
+        String[] feedbackCol = propertyField.split(separatorRegex2);
 
         //检查配置个数和实际字段个数是否一致
         if(feedbackArray.length != feedbackCol.length){
-            throw new Exception("反馈字段个数与配置个数不相符");
+            throw new Exception("反馈字段个数与配置个数不相符:" + feedbackArray.length + ":" + feedbackCol.length);
         }
 
         for (int i = 0; i < feedbackArray.length; i++) {
-            if(Constants.NSRSBH.equalsIgnoreCase(feedbackArray[i])){
-                context.setNsrsbh(feedbackCol[i]);
+            if(Constants.NSRSBH.equalsIgnoreCase(feedbackCol[i])){
+                context.setNsrsbh(feedbackArray[i]);
             }
         }
 
@@ -78,18 +80,18 @@ public class FeedbackEngineImpl implements FeedbackEngine {
             feedbackMap.put(ConvertUtils.toLowerCase(feedbackCol[i]),feedbackArray[i]);
         }
 
-        List<ApocalypseAreaRules> apocalypseAreaRules = CacheConfig.RULES_MAP.get(context.getArea());
+        List<ApocalypseAreaRules> apocalypseAreaRules = CommonCache.RULES_MAP.get(context.getArea());
         for (ApocalypseAreaRules apocalypseAreaRule : apocalypseAreaRules) {
-            if(apocalypseAreaRule.getRule_expression().isEmpty()){
+            if(StringUtils.isEmpty(apocalypseAreaRule.getRuleExpression())){
                 //如果EL表达式为空，则不进行修改
                 continue;
             }
-            String key = ConvertUtils.toLowerCase(apocalypseAreaRule.getFeedback_field());
+            String key = ConvertUtils.toLowerCase(apocalypseAreaRule.getFeedbackField());
             //EL表达式处理对应的字段，并放入新的Map中
             String originalField = feedbackMap.get(key);
 
             //调用引擎
-            String treatedField = invokeEngine(apocalypseAreaRule.getFeedback_field(),originalField, apocalypseAreaRule.getRule_expression());
+            String treatedField = invokeEngine(apocalypseAreaRule.getFeedbackField(),originalField, apocalypseAreaRule.getRuleExpression());
 
             //替换处理后的字段
             feedbackMap.put(key,treatedField);
@@ -97,12 +99,14 @@ public class FeedbackEngineImpl implements FeedbackEngine {
         }
 
         context.setFeedbackMap(feedbackMap);
-        String treatedJson = JSONObject.toJSONString(feedbackMap);
 
-        context.setTreated_json(treatedJson);
+        //处理后的MD5值存入
+        String treatedJson = JSONObject.toJSONString(feedbackMap);
         context.setMd5(Md5Util.getMd5(treatedJson));
 
-
+        context.setTreatedJson(treatedJson);
+        context.setRespCode(CommonEnum.FEEDBACK_STATUS_1111.getCode());
+        context.setRespMsg(CommonEnum.FEEDBACK_STATUS_1111.getMessage());
 
     }
 
@@ -147,10 +151,10 @@ public class FeedbackEngineImpl implements FeedbackEngine {
         //根据表达式组合的顺序，从左往后执行函数，且每个函数的入参 都是 前一个函数的结果
         for (int i = 0; i < expressionList.length; i++) {
             String expression = expressionList[i];
-            if(expression.isEmpty()){
+            if(StringUtils.isEmpty(expression)){
                 continue;
             }
-            if(null == originalField || originalField.isEmpty()){
+            if(StringUtils.isEmpty(originalField)){
                 log.info("原始字段为空");
                 return originalField;
             }
@@ -320,7 +324,7 @@ public class FeedbackEngineImpl implements FeedbackEngine {
 
     public String trim_2(String originalField,String accuracy){
         int count;
-        if(accuracy.isEmpty()){
+        if(StringUtils.isEmpty(accuracy)){
             count = ACCURACY;
         }else{
             count = Integer.parseInt(accuracy);
@@ -342,7 +346,7 @@ public class FeedbackEngineImpl implements FeedbackEngine {
 
     public String trim_3(String originalField,String accuracy){
         int count;
-        if(accuracy.isEmpty()){
+        if(StringUtils.isEmpty(accuracy)){
             count = ACCURACY;
         }else{
             count = Integer.parseInt(accuracy);
@@ -366,7 +370,7 @@ public class FeedbackEngineImpl implements FeedbackEngine {
 
     public String trim_4(String originalField,String accuracy){
         int count;
-        if(accuracy.isEmpty()){
+        if(StringUtils.isEmpty(accuracy)){
             count = ACCURACY;
         }else{
             count = Integer.parseInt(accuracy);
@@ -388,7 +392,7 @@ public class FeedbackEngineImpl implements FeedbackEngine {
     }
 
     public String date_1(String originalField,String dateFormat) throws Exception {
-        if(dateFormat.isEmpty()){
+        if(StringUtils.isEmpty(dateFormat)){
             dateFormat = "yyyy-MM-dd";
         }else{
             dateFormat = dateFormat.replaceAll("'", "").replaceAll("\"", "");

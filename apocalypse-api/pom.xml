@@ -6,27 +6,45 @@
         <artifactId>apocalypse</artifactId>
         <groupId>com.vzoom.apocalypse</groupId>
         <version>1.0.0</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
+    <groupId>apocalypse</groupId>
     <artifactId>apocalypse-api</artifactId>
+    <version>0.0.1</version>
     <packaging>war</packaging>
     <name>apocalypse-api</name>
 
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <java.version>1.8</java.version>
+    </properties>
+
+
     <dependencies>
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.vzoom.apocalypse</groupId>
-            <artifactId>common</artifactId>
+            <groupId>apocalypse</groupId>
+            <artifactId>apocalypse-common</artifactId>
             <version>1.0.0</version>
         </dependency>
+        <dependency>
+            <groupId>apocalypse</groupId>
+            <artifactId>apocalypse-jiangsu</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>apocalypse</groupId>
+            <artifactId>apocalypse-engine</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+        </dependency>
+
 
 <!--        <dependency>
             <groupId>com.baomidou</groupId>
@@ -53,14 +71,22 @@
             <scope>system</scope>
             <systemPath>${basedir}/src/main/webapp/WEB-INF/lib/ojdbc-8.jar</systemPath>
         </dependency>
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector</artifactId>
+            <version>1</version>
+            <scope>system</scope>
+            <systemPath>${basedir}/src/main/webapp/WEB-INF/lib/mysql-connector-java-8.0.15.jar</systemPath>
+        </dependency>
 
     </dependencies>
+
 
 
     <build>
 
         <plugins>
-            <plugin>
+            <!--<plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
             </plugin>
@@ -80,13 +106,12 @@
                     <failOnMissingWebXml>false</failOnMissingWebXml>
                 </configuration>
             </plugin>
-
+-->
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
-                    <!-- 工程主入口-->
-                    <mainClass>com.vzoom.apocalypse.ApocalypseApplication</mainClass>
+                    <fork>true</fork> <!-- 如果没有该配置，devtools不会生效 -->
                 </configuration>
                 <executions>
                     <execution>

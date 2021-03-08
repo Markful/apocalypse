@@ -1,45 +1,32 @@
 package com.vzoom.apocalypse.api.service.rules;
 
-import com.vzoom.apocalypse.api.dto.FeedbackContext;
+import com.vzoom.apocalypse.api.config.InitContext;
+import com.vzoom.apocalypse.common.dto.FeedbackContext;
+import com.vzoom.apocalypse.common.repositories.FeedbackMapper;
+import com.vzoom.apocalypse.common.service.FeedbackEngine;
 import com.vzoom.apocalypse.common.cache.CommonCache;
 import com.vzoom.apocalypse.common.entity.ApocalypseFeedback;
-import com.vzoom.apocalypse.api.repository.FeedbackMapper;
-import com.vzoom.apocalypse.api.repository.PropertyMapper;
-import com.vzoom.apocalypse.api.service.FeedbackEngine;
 import com.vzoom.apocalypse.common.entity.ApocalypseProperty;
 import com.vzoom.apocalypse.common.utils.FreeMarkerUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.List;
-import java.util.stream.Collectors;
+import org.springframework.stereotype.Service;
 
 /**
- * @Description: 模板方法通用实现
+ * @Description: 模板方法通用实现, 如果无法满足要求，则需要重新继承 AbstractRules 方法
  * @Author: wangyh
  * @Date: 2021/1/26
  */
 @Slf4j
+@Service
 public class CommonRulesHandler extends AbstractRulesDecorator {
-
-    @Autowired
-    private PropertyMapper propertyMapper;
 
     @Autowired
     private FeedbackEngine feedbackEngine;
 
     @Autowired
     private FeedbackMapper feedbackMapper;
-
-    @Autowired
-    private FreeMarkerUtil freeMarkerUtil;
-
-    /**
-     * 通用处理逻辑
-     * 如果无法满足要求，则需要重新继承 AbstractRules 方法
-     * @param feedbackContext
-     */
 
 
     /**
@@ -48,19 +35,19 @@ public class CommonRulesHandler extends AbstractRulesDecorator {
      * @param feedbackContext
      */
     @Override
-    public void invokeApocalypseEngine(FeedbackContext feedbackContext) {
+    public void invokeApocalypseEngine(FeedbackContext feedbackContext) throws Exception {
 
         try {
             feedbackEngine.exchange(feedbackContext);
-        } catch (Exception e) {
+        }catch (Exception e){
             e.printStackTrace();
+            throw e;
         }
-
-
     }
 
     /**
      * 调用模板，生成原始税局报文
+     *
      * @param feedbackContext
      * @return
      */
@@ -68,18 +55,16 @@ public class CommonRulesHandler extends AbstractRulesDecorator {
     public String packagingXmlFromFreemarker(FeedbackContext feedbackContext) {
 
         //找到符合当前地区的模板
-        ApocalypseProperty collect = CommonCache.PROPERTY_CACHE_LIST.stream().filter(x -> x.getArea().equals(feedbackContext.getArea())
-                && x.getMinistry_code().equals(feedbackContext.getMinistry_code())
-                && x.getProduct_id().equals(feedbackContext.getProduct_id())
-                && x.getTemplate_type().equals(feedbackContext.getTemplate_type())).findFirst().get();
+        ApocalypseProperty property = CommonCache.PROPERTY_CACHE_MAP.get(feedbackContext.getArea());
 
         //调用模板方法
-        String wrapped = freeMarkerUtil.process("body", collect.getRequest_template(), feedbackContext.getFeedbackMap());
+        FreeMarkerUtil freeMarkerUtil = InitContext.getBean("freeMarkerUtil");
+        String wrapped = freeMarkerUtil.process("body", property.getTaxTemplate(), feedbackContext.getFeedbackMap());
 
         //将处理好的数据存入
-        feedbackContext.setTreated_xml(wrapped);
+        feedbackContext.setTreatedXml(wrapped);
 
-        return null;
+        return wrapped;
     }
 
     /**
@@ -95,6 +80,7 @@ public class CommonRulesHandler extends AbstractRulesDecorator {
 
         //规则处理
         feedbackMapper.insert(feedback);
+        log.info("入库成功");
 
 
         return null;

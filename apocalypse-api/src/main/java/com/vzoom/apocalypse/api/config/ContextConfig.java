@@ -32,13 +32,10 @@ public class ContextConfig implements ApplicationRunner {
     @Override
     public void run(ApplicationArguments args) throws Exception {
 
-        /*将所有的地区配置读取出来,存入Map：CommonCache.areafieldPropertiesCache*/
+        /*将所有的地区配置读取出来,放入缓存*/
         log.info("开始读取配置文件");
         checkDataService.loadAreaField();
 
-        /*查询数据库 地区的配置参数,放入缓存*/
-        log.info("开始查询apocalypse_property表记录");
-        checkDataService.loadAreaFieldProperties();
 
         /*校验配置文件规则是否正确*/
         if(!checkDataService.checkFeedbackPropertyIntegrity() && !ignoreCheckRules){

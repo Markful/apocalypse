@@ -1,9 +1,8 @@
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.vzoom.apocalypse.ApocalypseApplication;
-import com.vzoom.apocalypse.api.config.FeedbackProperties;
 import com.vzoom.apocalypse.common.entity.ApocalypseAreaRules;
-import com.vzoom.apocalypse.api.repository.AreaRulesMapper;
+import com.vzoom.apocalypse.common.repositories.AreaRulesMapper;
 import com.vzoom.apocalypse.common.spel.SpelExcetor;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
@@ -65,9 +64,6 @@ public class test {
         System.out.println("result:" + result);
 
     }
-
-    @Autowired
-    FeedbackProperties feedbackProperties;
 
     @Autowired
     private Environment environment;

@@ -9,11 +9,13 @@ import java.util.List;
  * @author wans
  */
 public class ReadFileContext {
-   private ReadFeedbackFileStrategy fileStrategy;
+
+    private ReadFeedbackFileStrategy fileStrategy;
 
    public ReadFileContext(ReadFeedbackFileStrategy strategy) {
        this.fileStrategy = strategy;
    }
+
    public List<String> contextInterface(String path) throws Exception {
        return fileStrategy.readFeedbackData(path);
    }

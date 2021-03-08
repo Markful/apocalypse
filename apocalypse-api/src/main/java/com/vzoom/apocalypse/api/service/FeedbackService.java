@@ -7,4 +7,7 @@ public interface FeedbackService {
 
     void pushFeedbackInfo(String area) throws Exception;
 
+    void readAndPushPostloanInfo(String area) throws Exception;
+
+    void rePushPostloanInfo(String area);
 }

@@ -1,7 +1,7 @@
 package com.vzoom.apocalypse.api.service.impl;
 
 import com.vzoom.apocalypse.common.entity.AnomalyLog;
-import com.vzoom.apocalypse.api.repository.ProjectExceptionMapper;
+import com.vzoom.apocalypse.common.repositories.ProjectExceptionMapper;
 import com.vzoom.apocalypse.api.service.ExceptionService;
 import com.vzoom.apocalypse.common.constants.Constants;
 import com.vzoom.apocalypse.common.utils.DateUtil;
@@ -30,7 +30,7 @@ public class ExceptionServiceImpl implements ExceptionService {
     @Override
     public void toException(Exception e, String... args) {
 
-
+        
 
 
     }
@@ -47,9 +47,9 @@ public class ExceptionServiceImpl implements ExceptionService {
                 excepMsg = excepMsg.substring(0,2900);
             }
 
-            anomalyLog.setExcep_msg(excepMsg);
-            anomalyLog.setExcep_code(Constants.FEEDBACK_FAIL);
-            anomalyLog.setExcep_time(DateUtil.getCurrentDateString());
+            anomalyLog.setExcepMsg(excepMsg);
+            anomalyLog.setExcepCode(Constants.FEEDBACK_FAIL);
+            anomalyLog.setExcepTime(DateUtil.getCurrentDateString());
 
             projectExceptionMapper.insert(anomalyLog);
 

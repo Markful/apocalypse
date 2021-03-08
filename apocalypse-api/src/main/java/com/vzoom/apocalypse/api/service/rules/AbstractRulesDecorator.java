@@ -1,10 +1,8 @@
 package com.vzoom.apocalypse.api.service.rules;
 
-import com.vzoom.apocalypse.api.dto.FeedbackContext;
+import com.vzoom.apocalypse.common.dto.FeedbackContext;
 import com.vzoom.apocalypse.api.service.AreaRules;
-import com.vzoom.apocalypse.api.service.FeedbackMapperManager;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * 模板方法
@@ -16,9 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 @Slf4j
 public abstract class AbstractRulesDecorator  implements AreaRules {
 
-    @Autowired
-    private FeedbackMapperManager feedbackMapperManager;
-
 
     /**
      * 反馈逻辑处理 模板方法
@@ -28,21 +23,25 @@ public abstract class AbstractRulesDecorator  implements AreaRules {
     @Override
     public void HandleRules(FeedbackContext feedbackContext){
 
-        //调用反馈引擎，将原始数据转换成税局需要的数据
-        invokeApocalypseEngine(feedbackContext);
+        try {
+            //调用反馈引擎，将原始数据转换成税局需要的数据
+            invokeApocalypseEngine(feedbackContext);
 
-        //根据地区模板，组装XML报文
-        packagingXmlFromFreemarker(feedbackContext);
+            //根据地区模板，组装XML报文
+            packagingXmlFromFreemarker(feedbackContext);
 
-        //入库
-        saveDataToFeedback(feedbackContext);
+            //入库
+            saveDataToFeedback(feedbackContext);
 
+        }catch (Exception e){
+
+        }
         //请求datagrid入口网关，反馈给税局
 //        invokeDatagrid(feedbackContext);
 
     };
 
-    public abstract void invokeApocalypseEngine(FeedbackContext feedbackContext);
+    public abstract void invokeApocalypseEngine(FeedbackContext feedbackContext) throws Exception;
 
     public abstract String packagingXmlFromFreemarker(FeedbackContext feedbackContext);
 

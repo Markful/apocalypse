@@ -28,16 +28,16 @@ public class ReadSftpZipFileServiceImpl implements ReadFeedbackFileStrategy {
     @Autowired
     private ExceptionService exceptionService;
 
-    @Value("${}")
+    @Value("${test}")
     private String SFTP_HOST;
 
-    @Value("${}")
+    @Value("${test}")
     private Integer SFTP_PORT;
-    @Value("${}")
+    @Value("${test}")
     private String SFTP_USERNAME;
-    @Value("${}")
+    @Value("${test}")
     private String SFTP_PASSWORD;
-    @Value("${}")
+    @Value("${test}")
     private String SFTP_KEY_PATH;
 
     @Override

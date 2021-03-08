@@ -4,6 +4,13 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.3.3.RELEASE</version>
+        <relativePath/> <!-- lookup parent from repository -->
+    </parent>
+
     <groupId>com.vzoom.apocalypse</groupId>
     <artifactId>apocalypse</artifactId>
     <version>1.0.0</version>
@@ -12,24 +19,25 @@
 
 
     <modules>
-        <module>common</module>
+        <module>apocalypse-common</module>
         <module>apocalypse-api</module>
         <module>apocalypse-jiangsu</module>
+        <module>apocalypse-engine</module>
     </modules>
 
 
-    <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.3.3.RELEASE</version>
-        <relativePath/> <!-- lookup parent from repository -->
-    </parent>
+
 
     <properties>
+        <java.version>1.8</java.version>
         <mybatis.plus.boot.starter.version>3.2.0</mybatis.plus.boot.starter.version>
         <mybatis-typehandlers.version>1.0.2</mybatis-typehandlers.version>
 <!--        <mybatis.version>1.3.2</mybatis.version>-->
         <springfox-swagger-ui.version>2.9.2</springfox-swagger-ui.version>
+        <maven.resources.plugin.version>3.0.2</maven.resources.plugin.version>
+        <maven.compiler.plugin.version>3.8.0</maven.compiler.plugin.version>
+        <maven.jar.plugin.version>3.0.2</maven.jar.plugin.version>
+        <maven.war.plugin.version>3.2.3</maven.war.plugin.version>
         <swagger2.version>2.9.2</swagger2.version>
         <lombok.version>1.16.10</lombok.version>
         <google-guava.version>24.1.1-jre</google-guava.version>
@@ -45,15 +53,18 @@
         <http-client.version>4.5.9</http-client.version>
         <slf4j.version>1.7.22</slf4j.version>
         <freemarker.version>2.3.30</freemarker.version>
+
+
     </properties>
 
     <dependencies>
+
         <dependency>
             <groupId>org.freemarker</groupId>
             <artifactId>freemarker</artifactId>
             <version>${freemarker.version}</version>
         </dependency>
-        <dependency>
+<!--        <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
             <version>${slf4j.version}</version>
@@ -62,7 +73,7 @@
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
             <version>${slf4j.version}</version>
-        </dependency>
+        </dependency>-->
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
@@ -122,9 +133,25 @@
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-tomcat</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-tomcat</artifactId>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
@@ -279,7 +306,7 @@
         </dependency>
     -->
 
-    <build>
+<!--    <build>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -294,7 +321,7 @@
                     <source>1.8</source>
                     <target>1.8</target>
                     <encoding>UTF-8</encoding>
-                    <!--配置本地jar包在项目的存放路径-->
+                    &lt;!&ndash;配置本地jar包在项目的存放路径&ndash;&gt;
                     <compilerArguments>
                         <extdirs>${pom.basedir}/src/main/webapp/WEB-INF/lib</extdirs>
                     </compilerArguments>
@@ -306,9 +333,9 @@
                 <configuration>
                     <webResources>
                         <resource>
-                            <!--配置本地jar包在项目中的存放路径-->
+                            &lt;!&ndash;配置本地jar包在项目中的存放路径&ndash;&gt;
                             <directory>src/main/webapp/WEB-INF/lib/</directory>
-                            <!--配置打包时jar包的存放路径-->
+                            &lt;!&ndash;配置打包时jar包的存放路径&ndash;&gt;
                             <targetPath>WEB-INF/lib</targetPath>
                             <includes>
                                 <include>**/*.jar</include>
@@ -318,6 +345,61 @@
                 </configuration>
             </plugin>
         </plugins>
+    </build>-->
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.1</version>
+                <configuration>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                </configuration>
+            </plugin>
+        </plugins>
+
+        <pluginManagement><!-- lock down plugins versions to avoid using Maven defaults (may be moved to parent pom) -->
+            <plugins>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-resources-plugin</artifactId>
+                    <version>${maven.resources.plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>${maven.compiler.plugin.version}</version>
+                    <configuration>
+                        <source>${maven.compiler.source}</source>
+                        <target>${maven.compiler.target}</target>
+                        <encoding>${project.build.sourceEncoding}</encoding>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <version>${maven.jar.plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-war-plugin</artifactId>
+                    <version>${maven.war.plugin.version}</version>
+                    <configuration>
+                        <failOnMissingWebXml>false</failOnMissingWebXml>
+                    </configuration>
+                </plugin>
+
+            </plugins>
+        </pluginManagement>
     </build>
 
 </project>

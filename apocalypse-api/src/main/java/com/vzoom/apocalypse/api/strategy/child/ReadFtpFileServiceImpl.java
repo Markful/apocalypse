@@ -21,14 +21,14 @@ public class ReadFtpFileServiceImpl implements ReadFeedbackFileStrategy {
     @Autowired
     private ExceptionService exceptionService;
 
-    @Value("${}")
+    @Value("${test}")
     private String FTP_HOST;
 
-    @Value("${}")
+    @Value("${test}")
     private Integer FTP_PORT;
-    @Value("${}")
+    @Value("${test}")
     private String FTP_LOGIN_NAME;
-    @Value("${}")
+    @Value("${test}")
     private String FTP_LOGIN_PASSWORD;
 
 

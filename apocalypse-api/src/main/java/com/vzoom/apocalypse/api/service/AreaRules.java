@@ -1,7 +1,7 @@
 package com.vzoom.apocalypse.api.service;
 
 
-import com.vzoom.apocalypse.api.dto.FeedbackContext;
+import com.vzoom.apocalypse.common.dto.FeedbackContext;
 
 /**
  * @Description: 规则限定接口

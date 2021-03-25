@@ -67,9 +67,29 @@ public class CheckDataServiceImpl implements CheckDataService {
             if(StringUtils.isNotEmpty(area) && null != property){
                 log.info("添加 {} 地区反馈配置 信息:{}",area,areaProperty);
                 CommonCache.AREA_LIST.add(area);
-                CommonCache.AREAFIELD_PROPERTIES_CACHE.put(area,property);
+
+                //保存地区个性化分隔符
+                if(!StringUtils.isEmpty(areaProperty.getAreaSeparator())){
+                    AREA_SEPARATOR_CACHE.put(area,areaProperty.getAreaSeparator());
+                }
+
+                String separatorRegex2 = ConvertUtils.findSeparator(property,area);
+                String[] feedbackCol = property.split(separatorRegex2);
+                CommonCache.AREAFIELD_PROPERTIES_CACHE.put(area,feedbackCol);
+
+                //解析每个地区的nsrsbh所在位置下标
+                for (int i = 0; i < feedbackCol.length; i++) {
+                    if(Constants.NSRSBH.equalsIgnoreCase(feedbackCol[i])){
+                        NSRSBH_INDEX.put(area,i);
+                    }
+                }
+
+
                 PROPERTY_CACHE_MAP.put(area,areaProperty);
+
             }
+
+
         }
 
     }

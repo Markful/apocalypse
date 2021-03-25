@@ -26,6 +26,7 @@ import com.vzoom.apocalypse.common.repositories.PostloanMapper;
 import com.vzoom.apocalypse.common.service.InvokeService;
 import com.vzoom.apocalypse.common.utils.HttpClientUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
@@ -101,8 +102,7 @@ public class FeedbackServiceImpl implements FeedbackService {
             return;
         }
 
-
-        log.info("调用反馈引擎，处理原始字段");
+        log.info("调用反馈引擎，处理原始字段,总记录数：{}",feedbackContextList.size());
         for (FeedbackContext feedbackContext : feedbackContextList) {
             try {
                 feedbackContext.setSource(CommonEnum.FEEDBACK_SOURCE_SCHEDULE.getCode());
@@ -110,9 +110,7 @@ public class FeedbackServiceImpl implements FeedbackService {
                 commonRulesHandler.HandleRules(feedbackContext);
 
             } catch (Exception e) {
-                log.error("反馈引擎调用出错：{}",e.getMessage()+e);
-                e.printStackTrace();
-
+                log.error("反馈引擎调用出错：{}",ExceptionUtils.getMessage(e));
             }
         }
 
@@ -395,8 +393,7 @@ public class FeedbackServiceImpl implements FeedbackService {
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
-            log.error("获取文件策略报错 {}，请检查数据库表apocalypse_property 配置项：FEEDBACK_STRATEGY", e.getMessage() + e);
+            log.error("获取文件策略报错 {}，请检查数据库表apocalypse_property 配置项：FEEDBACK_STRATEGY", ExceptionUtils.getMessage(e));
             throw e;
         }
 

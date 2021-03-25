@@ -238,6 +238,12 @@ public class ApocalypseProperty {
     @TableField("ENCRYPT_ALGORITHM")
     private String encryptAlgorithm;
 
+    /**
+     * 个性化分隔符
+     */
+    @TableField("AREA_SEPARATOR")
+    private String areaSeparator;
+
 
     /**
      * LRSJ

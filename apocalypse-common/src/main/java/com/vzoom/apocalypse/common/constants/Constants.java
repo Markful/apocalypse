@@ -40,6 +40,7 @@ public class Constants {
     public static final String SPEL_METHOD_TRIM_2 = "trim_2";//保留几位小数
     public static final String SPEL_METHOD_TRIM_3 = "trim_3";//转换成万元，保留n位小数，eg:502300 -> 50.23
     public static final String SPEL_METHOD_TRIM_4 = "trim_4";//万元转成元，保留n位小数0
+    public static final String SPEL_METHOD_REPLACE_0 = "replace_0";//将org转换成target
     public static final String SPEL_METHOD_DATE_0 = "date_0";//将当前系统时间转换为指定格式
     public static final String SPEL_METHOD_DATE_1 = "date_1";//将字段的时间转换为指定格式
     public static final String SPEL_METHOD_DATE_2 = "date_2";//格式转换，支持互转(yyyymmdd,yyyy-mm-dd)(yyyy-mm-dd,yyyy-mm-dd hh:mm:ss)(yyyymmdd,yyyy-mm-dd hh:mm:ss)

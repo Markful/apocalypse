@@ -3,6 +3,7 @@ package com.vzoom.apocalypse.api.service.rules;
 import com.vzoom.apocalypse.common.dto.FeedbackContext;
 import com.vzoom.apocalypse.api.service.AreaRules;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 
 /**
  * 模板方法
@@ -24,17 +25,20 @@ public abstract class AbstractRulesDecorator  implements AreaRules {
     public void HandleRules(FeedbackContext feedbackContext){
 
         try {
+            log.info("handleRulesStep1");
             //调用反馈引擎，将原始数据转换成税局需要的数据
             invokeApocalypseEngine(feedbackContext);
 
             //根据地区模板，组装XML报文
+            log.info("handleRulesStep2");
             packagingXmlFromFreemarker(feedbackContext);
 
             //入库
+            log.info("handleRulesStep3");
             saveDataToFeedback(feedbackContext);
 
         }catch (Exception e){
-
+            log.error("反馈逻辑处理出错：{}",ExceptionUtils.getMessage(e));
         }
         //请求datagrid入口网关，反馈给税局
 //        invokeDatagrid(feedbackContext);

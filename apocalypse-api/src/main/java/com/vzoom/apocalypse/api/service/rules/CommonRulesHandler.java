@@ -9,6 +9,7 @@ import com.vzoom.apocalypse.common.entity.ApocalypseFeedback;
 import com.vzoom.apocalypse.common.entity.ApocalypseProperty;
 import com.vzoom.apocalypse.common.utils.FreeMarkerUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -38,9 +39,11 @@ public class CommonRulesHandler extends AbstractRulesDecorator {
     public void invokeApocalypseEngine(FeedbackContext feedbackContext) throws Exception {
 
         try {
+
             feedbackEngine.exchange(feedbackContext);
+
         }catch (Exception e){
-            e.printStackTrace();
+            log.error("反馈引擎调用报错:{}", ExceptionUtils.getMessage(e));
             throw e;
         }
     }

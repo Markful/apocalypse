@@ -12,6 +12,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.vzoom.apocalypse.common.cache.CommonCache.AREA_SEPARATOR_CACHE;
+
 /**
  * @Description:
  * @Author: wangyh
@@ -134,9 +136,14 @@ public class ConvertUtils {
     /**
      * 传入正则表达式，找出字符串中的分隔符
      * @return 转义后的分隔符，带\
+     *
      */
-    public static String findSeparator(String str){
+    public static String findSeparator(String str,String area){
 
+        if(AREA_SEPARATOR_CACHE.containsKey(area)){
+            //返回个性化分隔符
+            return AREA_SEPARATOR_CACHE.get(area);
+        }
 
         String[] split = str.split("[A-Za-z0-9]+");
         StringBuilder sb = new StringBuilder();
